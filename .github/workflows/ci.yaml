@@ -1,0 +1,53 @@
+name: CI
+
+permissions: {}
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      artifact:
+        description: The name of an artifact of this workflow run to extract into the repository before checking it
+        type: string
+        required: false
+        default: ""
+
+jobs:
+  check:
+    name: Check (${{ matrix.system }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+          - runner: macos-15
+            system: aarch64-darwin
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download changes
+        if: inputs.artifact != ''
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ inputs.artifact }}
+          path: .
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2
+
+      - name: Check flake
+        shell: bash
+        run: nix flake check --print-build-logs --show-trace

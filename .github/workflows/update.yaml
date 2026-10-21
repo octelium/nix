@@ -1,0 +1,186 @@
+name: Update
+
+permissions: {}
+
+on:
+  schedule:
+    - cron: "23,53 * * * *"
+    - cron: "41 4 * * 1"
+  repository_dispatch:
+    types: [release]
+  workflow_dispatch:
+    inputs:
+      octelium:
+        description: Octelium release tag (e.g. v1.2.3). The latest release is used if empty
+        type: string
+        required: false
+        default: ""
+      octelium-desktop:
+        description: Octelium Desktop release tag (e.g. v1.2.3). The latest release is used if empty
+        type: string
+        required: false
+        default: ""
+      nixpkgs:
+        description: Update the nixpkgs input
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: update-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+      failed: ${{ steps.octelium.outcome == 'failure' || steps.octelium-desktop.outcome == 'failure' || steps.nixpkgs.outcome == 'failure' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Update Octelium
+        id: octelium
+        if: github.event.schedule != '41 4 * * 1'
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.octelium }}
+        run: scripts/update.sh octelium ${TAG:+"$TAG"}
+
+      - name: Update Octelium Desktop
+        id: octelium-desktop
+        if: github.event.schedule != '41 4 * * 1'
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.octelium-desktop }}
+        run: scripts/update.sh octelium-desktop ${TAG:+"$TAG"}
+
+      - name: Install Nix
+        if: github.event.schedule == '41 4 * * 1' || inputs.nixpkgs
+        uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2
+
+      - name: Update nixpkgs
+        id: nixpkgs
+        if: github.event.schedule == '41 4 * * 1' || inputs.nixpkgs
+        continue-on-error: true
+        shell: bash
+        run: nix flake update nixpkgs
+
+      - name: Detect changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- sources flake.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --stat -- sources flake.lock
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Save changes
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: changes
+          path: |
+            sources/*.json
+            flake.lock
+          if-no-files-found: error
+          retention-days: 1
+
+  check:
+    name: Check
+    needs: prepare
+    if: needs.prepare.outputs.changed == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yaml
+    with:
+      artifact: changes
+
+  push:
+    name: Push
+    needs: [prepare, check]
+    if: needs.prepare.outputs.changed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download changes
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: changes
+          path: .
+
+      - name: Commit and push
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          [[ "$GITHUB_REF" == refs/heads/* ]]
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for project in octelium octelium-desktop; do
+            file="sources/$project.json"
+            if git diff --quiet -- "$file"; then
+              continue
+            fi
+            old_version="$(git show "HEAD:$file" | jq -r .version)"
+            new_version="$(jq -r .version "$file")"
+            git add -- "$file"
+            git commit -m "$project: $old_version -> $new_version"
+          done
+
+          if ! git diff --quiet -- flake.lock; then
+            old_rev="$(git show HEAD:flake.lock | jq -r .nodes.nixpkgs.locked.rev)"
+            new_rev="$(jq -r .nodes.nixpkgs.locked.rev flake.lock)"
+            git add flake.lock
+            git commit -m "flake.lock: update nixpkgs ${old_rev:0:12} -> ${new_rev:0:12}"
+          fi
+
+          git log --oneline "$GITHUB_SHA..HEAD"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:$GITHUB_REF"
+
+  status:
+    name: Status
+    needs: [prepare, check, push]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Check status
+        shell: bash
+        env:
+          PREPARE: ${{ needs.prepare.result }}
+          FAILED: ${{ needs.prepare.outputs.failed }}
+          CHECK: ${{ needs.check.result }}
+          PUSH: ${{ needs.push.result }}
+        run: |
+          set -euo pipefail
+          echo "prepare=$PREPARE failed=$FAILED check=$CHECK push=$PUSH"
+          [[ "$PREPARE" == "success" && "$FAILED" != "true" ]]
+          [[ "$CHECK" == "success" || "$CHECK" == "skipped" ]]
+          [[ "$PUSH" == "success" || "$PUSH" == "skipped" ]]
