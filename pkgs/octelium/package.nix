@@ -3,6 +3,8 @@
   stdenvNoCC,
   fetchurl,
   installShellFiles,
+  makeWrapper,
+  xdg-utils,
   pname ? "octelium",
 }:
 
@@ -32,7 +34,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   sourceRoot = ".";
 
-  nativeBuildInputs = [ installShellFiles ];
+  nativeBuildInputs = [
+    installShellFiles
+  ]
+  ++ lib.optional stdenvNoCC.hostPlatform.isLinux makeWrapper;
 
   dontConfigure = true;
   dontBuild = true;
@@ -52,6 +57,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       --bash <($out/bin/${pname} completion bash) \
       --fish <($out/bin/${pname} completion fish) \
       --zsh <($out/bin/${pname} completion zsh)
+  '';
+
+  postFixup = lib.optionalString stdenvNoCC.hostPlatform.isLinux ''
+    wrapProgram $out/bin/${pname} --prefix PATH : ${lib.makeBinPath [ xdg-utils ]}
   '';
 
   doInstallCheck = true;

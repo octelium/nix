@@ -81,7 +81,7 @@ Add the flake to your system flake and enable the module:
 | `programs.octelium-desktop.package` | `octelium-desktop` | The Octelium Desktop package. |
 | `programs.octelium-desktop.autostart` | `false` | Start Octelium Desktop on graphical login via a system-wide XDG autostart entry. |
 | `programs.octelium-desktop.daemon.package` | `octelium` | The package providing the `octelium` executable that runs the daemon. |
-| `programs.octelium-desktop.daemon.owner` | `null` | The UID of the OS user that owns the daemon, e.g. `config.users.users.alice.uid`. By default, the daemon is owned by the OS user of its first local API caller. |
+| `programs.octelium-desktop.daemon.owner` | `null` | The UID of the OS user that owns the daemon, e.g. `1000`. By default, the daemon is owned by the OS user of its first local API caller. |
 | `programs.octelium-desktop.daemon.extraArgs` | `[ ]` | Extra arguments passed to `octelium daemon`. |
 
 ### The daemon
@@ -92,6 +92,22 @@ Octelium Desktop does not connect to Clusters by itself. It controls the local O
 - It serves the local API at `/run/octelium/daemon.sock`. Every local API call from an OS user other than the owner of the daemon is rejected.
 - It stores the credentials and the settings of its owner in the Octelium home directory of the owner, i.e. `~/.config/octelium`.
 - It runs from the `octelium` package of this flake rather than a copy bundled with Octelium Desktop. The module asserts that this package is at least the Octelium version that the Octelium Desktop release was built against.
+
+To bind the daemon to a specific user, set an explicit UID:
+
+```nix
+{ config, ... }:
+{
+  users.users.alice = {
+    isNormalUser = true;
+    uid = 1000;
+  };
+
+  programs.octelium-desktop.daemon.owner = config.users.users.alice.uid;
+}
+```
+
+An automatically allocated UID is `null` during Nix evaluation. Referencing it as the daemon owner leaves the daemon owned by its first local API caller.
 
 You can inspect it as follows:
 
@@ -108,9 +124,9 @@ Prefer the `autostart` option to the start-on-login setting of the application. 
 
 The `octelium-desktop` package only contains the application, since Nix cannot install system services outside of NixOS. Use the official [Debian, RPM or Arch Linux packages](https://octelium.com/docs) of Octelium Desktop on other Linux distributions, or run `sudo octelium daemon` yourself before starting the application.
 
-## nix-darwin and Home Manager
+## nix-darwin
 
-Add the packages directly:
+Pass the `octelium` flake input through `specialArgs` and add the packages directly:
 
 ```nix
 { pkgs, octelium, ... }:
@@ -130,6 +146,27 @@ Or use the overlay:
 ```
 
 The overlay builds the packages with your own nixpkgs. It also supports `x86_64-darwin` with nixpkgs releases that still support it.
+
+## Home Manager
+
+Pass the `octelium` flake input through `extraSpecialArgs` and add the packages directly:
+
+```nix
+{ pkgs, octelium, ... }:
+{
+  home.packages = [ octelium.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+}
+```
+
+Or use the overlay:
+
+```nix
+{ pkgs, octelium, ... }:
+{
+  nixpkgs.overlays = [ octelium.overlays.default ];
+  home.packages = [ pkgs.octelium-tools ];
+}
+```
 
 ## Without flakes
 

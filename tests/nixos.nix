@@ -68,10 +68,10 @@ pkgs.testers.runNixOSTest {
       with subtest("the application connects to the daemon"):
           desktop.wait_for_x()
           desktop.wait_for_unit("octelium-desktop-daemon.service")
-          desktop.succeed("${pkgs.dbus}/bin/dbus-run-session -- octelium-desktop >&2 &")
+          desktop.succeed("${pkgs.dbus}/bin/dbus-run-session -- sh -c 'echo $$ > /tmp/octelium-desktop.pid; exec octelium-desktop' >&2 &")
           desktop.wait_for_file("/root/.config/octelium/octelium.db", timeout=120)
           desktop.sleep(5)
-          desktop.succeed("pgrep -f octelium-desktop-wrapped")
+          desktop.succeed("kill -0 $(cat /tmp/octelium-desktop.pid)")
           desktop.screenshot("octelium-desktop")
     '';
 }

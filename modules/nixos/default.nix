@@ -59,11 +59,13 @@ in
       owner = lib.mkOption {
         type = lib.types.nullOr lib.types.ints.unsigned;
         default = null;
-        example = lib.literalExpression "config.users.users.alice.uid";
+        example = 1000;
         description = ''
           The UID of the OS user that owns the daemon. The local API calls of
           every other OS user are rejected. By default, the daemon is owned by
-          the OS user of its first local API caller.
+          the OS user of its first local API caller. When referencing
+          `config.users.users.<name>.uid`, explicitly set that user's UID since
+          an automatically allocated UID is `null` during evaluation.
         '';
       };
 
