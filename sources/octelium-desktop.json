@@ -1,14 +1,14 @@
 {
-  "version": "0.2.8",
-  "minimumOcteliumVersion": "0.46.0",
+  "version": "0.3.0",
+  "minimumOcteliumVersion": "0.49.0",
   "assets": {
     "x86_64-linux": {
-      "url": "https://github.com/octelium/octelium-desktop/releases/download/v0.2.8/octelium-desktop-linux-amd64-Octelium.Desktop_0.2.8_amd64.deb",
-      "hash": "sha256-gUr2M3R99dfsw8VWfX5ChbkQ5uQUquXQ2s+udwWK5ys="
+      "url": "https://github.com/octelium/octelium-desktop/releases/download/v0.3.0/octelium-desktop-linux-amd64-Octelium.Desktop_0.3.0_amd64.deb",
+      "hash": "sha256-FuwstVSTj3PIiMlG2qPylV83g0kGmpLt5KnHh070b0I="
     },
     "aarch64-linux": {
-      "url": "https://github.com/octelium/octelium-desktop/releases/download/v0.2.8/octelium-desktop-linux-arm64-Octelium.Desktop_0.2.8_arm64.deb",
-      "hash": "sha256-IZSxNjHmSnGSnzGisbureGOioz2IsFj3CqWeeJkzvJg="
+      "url": "https://github.com/octelium/octelium-desktop/releases/download/v0.3.0/octelium-desktop-linux-arm64-Octelium.Desktop_0.3.0_arm64.deb",
+      "hash": "sha256-Lf/V1DzLtXlAiB1TcZm9uK0Z/QB8HATjsGafHKqIjTg="
     }
   }
 }
