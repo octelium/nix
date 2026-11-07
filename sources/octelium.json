@@ -1,60 +1,60 @@
 {
-  "version": "0.49.0",
+  "version": "0.50.0",
   "assets": {
     "x86_64-linux": {
       "octelium": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octelium-linux-amd64.tar.gz",
-        "hash": "sha256-dv6PN4E4IDFCOjUL78dznKwHn8oXemPRKh6ad84VGW0="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octelium-linux-amd64.tar.gz",
+        "hash": "sha256-dO/LDkz3SHoYC6bKcZFHR26Z7l5Qxonz4nOptPE5f0Y="
       },
       "octeliumctl": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octeliumctl-linux-amd64.tar.gz",
-        "hash": "sha256-MZWvp4uyLmS8fIQr8dykFt4Txr8FeLJFebqvA8ctdyU="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octeliumctl-linux-amd64.tar.gz",
+        "hash": "sha256-8ieb9wwQsZS6OI1r0OlPFPA1N1oVM14ttUn3vV2CMbI="
       },
       "octops": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octops-linux-amd64.tar.gz",
-        "hash": "sha256-n1Z5LmwA+lQ6P/01JYRSirTbmXxO61ZESGZT112UZ/U="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octops-linux-amd64.tar.gz",
+        "hash": "sha256-lqcQaHaLOHrV0y0CDpSyNq0MCjSXTp7yPw9iKzDoyfI="
       }
     },
     "aarch64-linux": {
       "octelium": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octelium-linux-arm64.tar.gz",
-        "hash": "sha256-L7/UypY6XeBwVb1awffIi8Y08pUzc4WkdMdmsGbXwK8="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octelium-linux-arm64.tar.gz",
+        "hash": "sha256-c8OE0i/2tG0OoUZm57XZfBHjtp1UswHpDIMh8MWDuYM="
       },
       "octeliumctl": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octeliumctl-linux-arm64.tar.gz",
-        "hash": "sha256-AWOFcTVkyivIGi73eQQJVt23R8cyxVYh3n7m32CjBGA="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octeliumctl-linux-arm64.tar.gz",
+        "hash": "sha256-+TIDql0SO+5rbDt5Th1VbbOL3RwBD59Ci5q3imRK+mc="
       },
       "octops": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octops-linux-arm64.tar.gz",
-        "hash": "sha256-bLfD8vngAuByP9Qf80Y/+pYCcu2ZyP3WezfdqYIKfbo="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octops-linux-arm64.tar.gz",
+        "hash": "sha256-VvJRJcwne0Esg60T+ys66WUX0AkhZ75oUEijPc0ARoI="
       }
     },
     "x86_64-darwin": {
       "octelium": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octelium-darwin-amd64.tar.gz",
-        "hash": "sha256-dfwlyW2Z7QRs/9+clkccgt9rJmQavwy605TZLoxYBmo="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octelium-darwin-amd64.tar.gz",
+        "hash": "sha256-JTksRih/CCu7TGoOKy8TReCbAuaeYv3UOIbzm8szZwU="
       },
       "octeliumctl": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octeliumctl-darwin-amd64.tar.gz",
-        "hash": "sha256-/HpRFypW9SGeS6EwvatkBoa0VGgzMY6XxWQB/2azyzs="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octeliumctl-darwin-amd64.tar.gz",
+        "hash": "sha256-BGwimAxuq7rHTW/sdmiAGCx5KALDmKQllD+Ham4z6Ow="
       },
       "octops": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octops-darwin-amd64.tar.gz",
-        "hash": "sha256-kFjrWNjLq0VYowZzJO9ocEo16r+aFSiVBWATAtXEpAY="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octops-darwin-amd64.tar.gz",
+        "hash": "sha256-+XB0A66hyWhFeYRoHoSwQP/5nvUpIzGk5oQ1aMPpnsk="
       }
     },
     "aarch64-darwin": {
       "octelium": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octelium-darwin-arm64.tar.gz",
-        "hash": "sha256-3rbEJMhQiSgxpJknCOl4xL+tTvNKLMIyDhZcdQNk1kI="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octelium-darwin-arm64.tar.gz",
+        "hash": "sha256-sHRfmSgz0TT0TbLxrDo52NFGlIoXvjJw766l3ph1HIk="
       },
       "octeliumctl": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octeliumctl-darwin-arm64.tar.gz",
-        "hash": "sha256-4K6ZnbjRXxXW+fXqq9t9zZG0Sz+7yQtSvNe1U6ag/mU="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octeliumctl-darwin-arm64.tar.gz",
+        "hash": "sha256-wpbK2VGYG3aSVPiKtk43UFW7sQu94zctcIdqJf+YfVA="
       },
       "octops": {
-        "url": "https://github.com/octelium/octelium/releases/download/v0.49.0/octops-darwin-arm64.tar.gz",
-        "hash": "sha256-lP2vGr8jLdH6C5Q5o7Uwue5mbw5cNAPw5/fvrzFU42M="
+        "url": "https://github.com/octelium/octelium/releases/download/v0.50.0/octops-darwin-arm64.tar.gz",
+        "hash": "sha256-aOb/56j0jKcisu+LEe/EbV3movxggVGfcUKbFvTPQSY="
       }
     }
   }
